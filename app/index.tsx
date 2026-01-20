@@ -82,6 +82,7 @@ export default function Screen() {
           onChangeText={handleUsernameChange}
           className="h-16 rounded-full px-8"
           editable={!isLoading}
+          autoCapitalize='none'
         />
         {error && <Text className="px-4 text-sm text-destructive">{error}</Text>}
         <Button size="primary" onPress={searchUser} className="gap-2" disabled={isLoading}>
