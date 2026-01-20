@@ -17,6 +17,7 @@ const buttonVariants = cva(
           'bg-primary shadow-sm shadow-black/5 active:bg-primary/90',
           Platform.select({ web: 'hover:bg-primary/90' })
         ),
+        primary: 'rounded-full bg-cyan-500',
         destructive: cn(
           'bg-destructive shadow-sm shadow-black/5 active:bg-destructive/90 dark:bg-destructive/60',
           Platform.select({
@@ -43,6 +44,7 @@ const buttonVariants = cva(
         default: cn('h-10 px-4 py-2 sm:h-9', Platform.select({ web: 'has-[>svg]:px-3' })),
         sm: cn('h-9 gap-1.5 rounded-md px-3 sm:h-8', Platform.select({ web: 'has-[>svg]:px-2.5' })),
         lg: cn('h-11 rounded-md px-6 sm:h-10', Platform.select({ web: 'has-[>svg]:px-4' })),
+        primary: 'h-16 w-full rounded-full',
         icon: 'h-10 w-10 sm:h-9 sm:w-9',
       },
     },
@@ -62,6 +64,7 @@ const buttonTextVariants = cva(
     variants: {
       variant: {
         default: 'text-primary-foreground',
+        primary: 'text-primary',
         destructive: 'text-white',
         outline: cn(
           'group-active:text-accent-foreground',
@@ -78,6 +81,7 @@ const buttonTextVariants = cva(
         default: '',
         sm: '',
         lg: '',
+        primary: '',
         icon: '',
       },
     },
