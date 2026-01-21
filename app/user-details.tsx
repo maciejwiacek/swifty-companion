@@ -8,18 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import {
-  CheckCheckIcon,
-  CheckCircleIcon,
   CircleCheckIcon,
   CircleXIcon,
   MapPinIcon,
-  PinIcon,
   ShieldCheck,
-  StarHalfIcon,
   StarIcon,
   WalletIcon,
 } from 'lucide-react-native';
-import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
@@ -49,10 +44,8 @@ export default function UserDetails() {
         contentContainerClassName="items-center pb-8"
         nestedScrollEnabled
         showsVerticalScrollIndicator={false}>
-        <View className="relative mb-5">
-          <Avatar
-            alt={user.usual_full_name}
-            className="h-28 w-28 overflow-visible border-2 border-cyan-500 shadow shadow-cyan-500">
+        <View className="relative my-5">
+          <Avatar alt={user.usual_full_name} className="h-28 w-28 overflow-visible">
             <View className="m-0.5 overflow-hidden rounded-full">
               <AvatarImage source={{ uri: user.image.link }} />
               <AvatarFallback>
@@ -60,8 +53,10 @@ export default function UserDetails() {
               </AvatarFallback>
             </View>
           </Avatar>
-          <Badge className="absolute bottom-[-5px] right-0 bg-cyan-500">
-            <Text>Level {user.cursus_users[1].level}</Text>
+          <Badge className="absolute bottom-[-5px] right-0 border-2 border-accent">
+            <Text>
+              Level {user.cursus_users[1] ? user.cursus_users[1].level : user.cursus_users[0].level}
+            </Text>
           </Badge>
         </View>
         <View className="items-center gap-1">
@@ -77,40 +72,47 @@ export default function UserDetails() {
         <View className="mx-4 mt-8 flex-row gap-4">
           <Card className="w-1/2 flex-1 items-center">
             <CardHeader>
-              <Icon as={WalletIcon} size={24} color="cyan" className="shadow-sm shadow-cyan-500" />
+              <Icon as={WalletIcon} size={24} className="shadow-sm" />
             </CardHeader>
             <CardContent className="items-center">
-              <Text className="text-primary">{user.wallet}</Text>
+              <Text className="font-bold">{user.wallet}</Text>
               <Text className="text-xs font-light text-gray-500">Wallet</Text>
             </CardContent>
           </Card>
           <Card className="w-1/2 flex-1 items-center">
             <CardHeader>
-              <Icon as={ShieldCheck} size={24} color="cyan" className="shadow-sm shadow-cyan-500" />
+              <Icon as={ShieldCheck} size={24} className="shadow-sm" />
             </CardHeader>
             <CardContent className="items-center">
-              <Text className="text-primary">{user.correction_point}</Text>
+              <Text className="font-bold">{user.correction_point}</Text>
               <Text className="text-xs font-light text-gray-500">Evaluation Points</Text>
             </CardContent>
           </Card>
         </View>
         <View className="w-full px-4">
           <Text className="my-4 text-xl font-semibold">Skills</Text>
-          {user.cursus_users[0].skills.map((skill) => (
-            <View key={skill.id} className="mb-4">
-              <View>
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-sm font-semibold">{skill.name}</Text>
-                  <Text className="text-xs font-light text-gray-500">{skill.level}</Text>
+          {(user.cursus_users[1] ? user.cursus_users[1].skills : user.cursus_users[0].skills)
+            .length > 0 ? (
+            (user.cursus_users[1] ? user.cursus_users[1].skills : user.cursus_users[0].skills).map(
+              (skill) => (
+                <View key={skill.id} className="mb-4">
+                  <View>
+                    <View className="flex-row items-center justify-between">
+                      <Text className="text-sm font-semibold">{skill.name}</Text>
+                      <Text className="text-xs font-light text-gray-500">Level {skill.level}</Text>
+                    </View>
+                    <Progress
+                      value={skill.level * 10}
+                      className="mt-2"
+                      indicatorClassName="bg-primary"
+                    />
+                  </View>
                 </View>
-                <Progress
-                  value={skill.level * 10}
-                  className="mt-2"
-                  indicatorClassName="bg-cyan-500"
-                />
-              </View>
-            </View>
-          ))}
+              )
+            )
+          ) : (
+            <Text className="text-xs font-light text-gray-500">No skills found</Text>
+          )}
         </View>
         <View className="mt-8 w-full px-4">
           <Text className="text-xl font-semibold">Projects</Text>
@@ -128,17 +130,16 @@ export default function UserDetails() {
             <TabsContent value="finished" className="w-full items-center">
               <View className="w-full gap-4">
                 {user.projects_users
-                  .filter((project) => project.status === 'finished' && project.final_mark > 0)
+                  .filter((project) => project['validated?'] === true)
                   .map((project) => (
                     <Card key={project.id}>
                       <CardContent className="flex-row items-center px-4 py-3">
-                        <View className="mr-4 size-10 items-center justify-center rounded-md bg-cyan-500/20">
-                          <Icon
-                            as={project.final_mark > 100 ? StarIcon : CircleCheckIcon}
-                            size={24}
-                            color="cyan"
-                          />
-                        </View>
+                        <Icon
+                          as={project.final_mark > 100 ? StarIcon : CircleCheckIcon}
+                          size={24}
+                          className="mr-4"
+                          color={project.final_mark > 100 ? 'orange' : 'green'}
+                        />
                         <View className="mr-4 flex-1">
                           <Text className="text-sm font-semibold" numberOfLines={0}>
                             {project.project.name}
@@ -148,7 +149,7 @@ export default function UserDetails() {
                           </Text>
                         </View>
                         <View className="items-end">
-                          <Text className="font-semibold text-cyan-500">{project.final_mark}</Text>
+                          <Text className="font-semibold">{project.final_mark}</Text>
                         </View>
                       </CardContent>
                     </Card>
@@ -158,13 +159,11 @@ export default function UserDetails() {
             <TabsContent value="failed">
               <View className="w-full gap-4">
                 {user.projects_users
-                  .filter((project) => project.status === 'finished' && project.final_mark === 0)
+                  .filter((project) => project['validated?'] === false)
                   .map((project) => (
                     <Card key={project.id}>
                       <CardContent className="flex-row items-center px-4 py-3">
-                        <View className="mr-4 size-10 items-center justify-center rounded-md bg-red-500/20">
-                          <Icon as={CircleXIcon} size={24} color="red" />
-                        </View>
+                        <Icon as={CircleXIcon} size={24} color="red" className="mr-4" />
                         <View className="mr-4 flex-1">
                           <Text className="text-sm font-semibold" numberOfLines={0}>
                             {project.project.name}
@@ -174,7 +173,7 @@ export default function UserDetails() {
                           </Text>
                         </View>
                         <View className="items-end">
-                          <Text className="font-semibold text-red-500">{project.final_mark}</Text>
+                          <Text className="font-semibold">{project.final_mark}</Text>
                         </View>
                       </CardContent>
                     </Card>

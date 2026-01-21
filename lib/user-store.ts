@@ -23,6 +23,7 @@ export interface UserData {
   projects_users: {
     id: number;
     status: string;
+    'validated?': boolean | null;
     final_mark: number;
     project: {
       id: number;
